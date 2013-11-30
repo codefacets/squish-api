@@ -188,13 +188,8 @@ module Squish
       config.to_prepare &method(:inject_user_associations).to_proc
       config.allow_concurrency = true
 
-      config.autoload_paths << config.root.join('app', 'models', 'additions')
-      config.autoload_paths << config.root.join('app', 'models', 'observers')
-      config.autoload_paths << config.root.join('app', 'controllers', 'additions')
-      config.autoload_paths << config.root.join('app', 'views', 'additions')
-      # config.autoload_paths << config.root.join('app', 'workers')
+      config.autoload_paths << config.root.join('app', 'workers')
       config.autoload_paths << config.root.join('lib')
-      config.autoload_paths << config.root.join('lib', 'workers')
 
       # Activate observers that should always be running.
       config.active_record.observers = :bug_observer, :comment_observer,
