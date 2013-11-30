@@ -35,7 +35,7 @@ puts "~~~~>>> LOADING OCCURRENCES_WORKER"
 require 'user-agent'
 
 class OccurrencesWorker
-  include BackgroundRunner::Job
+  include Sidekiq::Worker
 
   # Keys that must be passed to the {.perform} method. (We also need either the
   # `build` or `revision` keys.)
@@ -44,19 +44,7 @@ class OccurrencesWorker
   # @private
   attr_reader :project, :environment, :deploy
 
-  # Included for BackgroundRunner compatibility.
-
-  def self.perform(attrs)
-    new(attrs).perform
-  end
-
-  # Creates a new worker ready to process an incoming notification.
-  #
-  # @param [Hash<String, Object>] attrs The queue item properties.
-  # @raise [API::InvalidAttributesError] If the attributes are invalid.
-  # @raise [API::UnknownAPIKeyError] If the API key is invalid.
-
-  def initialize(attrs)
+  def initialize_from(attrs)
     @attrs = attrs.deep_clone
 
     raise API::InvalidAttributesError, "Missing required keys: #{(REQUIRED_KEYS - @attrs.select { |k, v| v.present? }.keys).to_sentence}" unless REQUIRED_KEYS.all? { |key| @attrs[key].present? }
@@ -77,8 +65,9 @@ class OccurrencesWorker
   # Processes an exception notification. Builds an {Occurrence} and possibly a
   # {Bug}.
 
-  def perform
-    Rails.logger.info "STARTING!!!!!!!!"
+  def perform(attrs)
+    initialize_from(attrs)
+
     # First make an occurrence to perform a blame on
     commit         = set_deploy_and_commit
     class_name     = @attrs.delete('class_name')
@@ -124,11 +113,11 @@ class OccurrencesWorker
     end
   rescue Object => err
     # don't get into an infinite loop of notifying Squash
-    Rails.logger.error "-- ERROR IN OccurrencesWorker #{err.object_id} --"
-    Rails.logger.error err
-    Rails.logger.error err.backtrace.join("\n")
-    Rails.logger.error @attrs.inspect
-    Rails.logger.error "-- END ERROR #{err.object_id} --"
+    ::Rails.logger.error "-- ERROR IN OccurrencesWorker #{err.object_id} --"
+    ::Rails.logger.error err
+    ::Rails.logger.error err.backtrace.join("\n")
+    ::Rails.logger.error @attrs.inspect
+    ::Rails.logger.error "-- END ERROR #{err.object_id} --"
     raise if Rails.env.test?
   end
 

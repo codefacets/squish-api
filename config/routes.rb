@@ -12,8 +12,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+require 'sidekiq/web'
 
 Squish::Api::Engine.routes.draw do
+
   scope module: 'squish/api' do
     post '1.0/notify'        => 'v1#notify'
     post '1.0/deploy'        => 'v1#deploy'
@@ -21,4 +23,7 @@ Squish::Api::Engine.routes.draw do
     post '1.0/deobfuscation' => 'v1#deobfuscation'
     post '1.0/sourcemap'     => 'v1#sourcemap'
   end
+
+  mount Sidekiq::Web => '/sidekiq', constraint: lambda { |request| SidekiqAuthConstraint.authorized?(request) }
+
 end

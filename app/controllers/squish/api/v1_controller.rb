@@ -63,7 +63,7 @@ module Squish
       # * `POST /api/1.0/notify`
 
       def notify
-        BackgroundRunner.run OccurrencesWorker, request.request_parameters.to_hash
+        OccurrencesWorker.perform_async request.request_parameters.to_hash
         head :ok
       end
 
