@@ -12,10 +12,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-Rails.application.routes.draw do
-  post 'api/1.0/notify' => 'api/v1#notify'
-  post 'api/1.0/deploy' => 'api/v1#deploy'
-  post 'api/1.0/symbolication' => 'api/v1#symbolication'
-  post 'api/1.0/deobfuscation' => 'api/v1#deobfuscation'
-  post 'api/1.0/sourcemap' => 'api/v1#sourcemap'
+
+Squish::Api::Engine.routes.draw do
+  scope module: 'squish/api' do
+    post '1.0/notify'        => 'v1#notify'
+    post '1.0/deploy'        => 'v1#deploy'
+    post '1.0/symbolication' => 'v1#symbolication'
+    post '1.0/deobfuscation' => 'v1#deobfuscation'
+    post '1.0/sourcemap'     => 'v1#sourcemap'
+  end
 end

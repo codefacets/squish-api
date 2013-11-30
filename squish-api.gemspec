@@ -1,16 +1,16 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require 'squash/version'
+require 'squish/api/version'
 
 Gem::Specification.new do |s|
-  s.name        = "squash-engine"
+  s.name        = "squish-api"
   s.homepage    = "http://squash.io/"
   s.summary     = "Exception reporting and bug analysis tool"
   s.description = "Exception reporting and bug analysis tool"
   s.email       = [ 'github@timothymorgan.info' ]
   s.authors     = [ 'Tim Morgan']
   s.license     = 'MIT'
-  s.version     = Squash::VERSION
+  s.version     = Squish::Api::VERSION
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

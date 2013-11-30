@@ -38,7 +38,7 @@ require 'zlib'
 
 module Squish
   module Api
-    class V1Controller < ActionController::Base
+    class V1Controller < ::ActionController::Base
       include Squash::Ruby::ControllerMethods
       enable_squash_client except: :notify # prevent infinite loop of notifications
 
